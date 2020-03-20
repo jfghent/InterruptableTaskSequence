@@ -7,6 +7,7 @@ package com.jfghent.interruptabletasksequence;
 
 import com.jfghent.interruptabletask.InterruptableTask;
 import com.jfghent.interruptabletimer.InterfaceVoid;
+import com.jfghent.interruptabletimermqtt.InterruptableTimerMqtt;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,15 +19,16 @@ public class InterruptableTaskSequence implements Runnable {
     private final Boolean cnx;
     private final Boolean paused;
     
-    private InterruptableTask currtask;
-    private final Queue<InterruptableTask> taskqueue;
-    private final InterfaceVoid vi_onfinish;
+    //private InterruptableTask currtask;
+    private InterruptableTimerMqtt currtask;
+    private final Queue<InterruptableTimerMqtt> taskqueue;
+    public final InterfaceVoid vi_onfinish;
     
-    InterruptableTaskSequence(InterfaceVoid onfinish){
+    public InterruptableTaskSequence(InterfaceVoid _onfinish){
         this.cnx = false;
         this.paused = false;
         this.taskqueue = new LinkedList<>();
-        vi_onfinish = onfinish;
+        vi_onfinish = _onfinish;
     }
     
     @Override
@@ -34,7 +36,7 @@ public class InterruptableTaskSequence implements Runnable {
         runNextTask();
     }
 
-    private void runNextTask() {
+    public void runNextTask() {
         if (taskqueue.peek()!=null){
                 currtask = taskqueue.remove();
                 currtask.start();
@@ -45,7 +47,7 @@ public class InterruptableTaskSequence implements Runnable {
         }
     }
     
-    public void add(InterruptableTask task){
+    public void add(InterruptableTimerMqtt task){
         taskqueue.add(task);
     }
     
@@ -66,7 +68,15 @@ public class InterruptableTaskSequence implements Runnable {
         currtask.resumetask();
     }
     
-    public void onfinish(){
-        vi_onfinish.run();
+    //public void onfinish(){
+    //    vi_onfinish.run();
+    //}
+    
+    public long GetElapsed(){
+        return currtask.GetElapsed();
+    }
+    
+    public long GetRemaining(){
+        return currtask.GetRemaining();
     }
 }
